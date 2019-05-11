@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <!--加载属性文件-->
+    <properties resource="db.properties"></properties>
+    <!--加载MySQL驱动的位置-->
+    <classPathEntry location="${db.mysql.location}"/>
+
+    <context id="context" targetRuntime="MyBatis3Simple">
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <!--配置连接数据库参数-->
+        <jdbcConnection userId="${db.username}" password="${db.password}" driverClass="${db.driver}" connectionURL="${db.url}"/>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!--配置实体类-->
+        <javaModelGenerator targetPackage="com.neuedu.pojo" targetProject="./src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!--配置mapper映射文件-->
+        <sqlMapGenerator targetPackage="com.neuedu.mapper" targetProject="./src/main/resources">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+        <!--配置dao层-->
+        <javaClientGenerator targetPackage="com.neuedu.dao" type="XMLMAPPER" targetProject="./src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </javaClientGenerator>
+
+        <table tableName="neuedu_user" domainObjectName="User" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_category" domainObjectName="Category" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_cart" domainObjectName="Cart" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_product" domainObjectName="Product" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_pay_info" domainObjectName="PayInfo" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_order" domainObjectName="Order" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_order_item" domainObjectName="OrderItem" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+        <table tableName="neuedu_shipping" domainObjectName="Shipping" enableCountByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" enableUpdateByExample="false"/>
+    </context>
+</generatorConfiguration>
