@@ -73,7 +73,7 @@ public class CategoryManagerController {
     }
 
     /**
-     * 获取子节点（不包含后代节点）
+     * 修改类别名称
      */
     @RequestMapping(value = "/set_category_name.do")
     public ServerResponse set_category_name(Integer categoryId, String categoryName, HttpSession session){
@@ -92,6 +92,28 @@ public class CategoryManagerController {
         }else{
             return ServerResponse.createByError("用户无权操作!");
         }
+    }
+
+    /**
+     * 递归获取后代节点
+     * @param categoryId
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/get_deep_category.do")
+    public ServerResponse get_deep_category(Integer categoryId, HttpSession session){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            //未登录或登录过期
+            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        //判断是否是管理员
+        ServerResponse serverResponse = userService.checkUserAdmin(user);
+        if(serverResponse.isSucces()){
+            //管理员
+            return categoryService.get_deep_category(categoryId);
+        }
+        return ServerResponse.createByError("不是管理员,没有权限操作!");
     }
 
 }

@@ -21,4 +21,12 @@ public interface ICategoryService {
      * 修改类别名称
      */
     ServerResponse set_category_name(Integer categoryId, String categoryName);
+
+    /**
+     * 递归获取本节点及后代节点
+     * @param categoryId
+     * @return
+     */
+    ServerResponse get_deep_category(Integer categoryId);
+
 }

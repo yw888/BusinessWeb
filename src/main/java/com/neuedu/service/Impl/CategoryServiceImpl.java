@@ -7,7 +7,9 @@ import com.neuedu.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CategoryServiceImpl implements ICategoryService {
@@ -57,5 +59,27 @@ public class CategoryServiceImpl implements ICategoryService {
             return ServerResponse.createByError("修改失败！");
         }
 
+    }
+
+    @Override
+    public ServerResponse get_deep_category(Integer categoryId) {
+
+        Set<Category> categorySet = new HashSet<>();
+        Set<Category> categories = findChildCategory(categoryId, categorySet);
+        return ServerResponse.createBySussess("成功", categories);
+    }
+
+    private Set<Category> findChildCategory(Integer categoryId, Set<Category> categorySet){
+        //step1:根据categoryId查询本节点
+        Category category = categoryMapper.selectByPrimaryKey(categoryId);
+        if(category != null){
+            //Category重写equals和hashCode，去重
+            categorySet.add(category);
+        }
+        List<Category> categories = categoryMapper.findChildCategoryByCategoryId(categoryId);
+        for(Category category1 : categories){
+            findChildCategory(category1.getId(), categorySet);
+        }
+        return categorySet;
     }
 }
