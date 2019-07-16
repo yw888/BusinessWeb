@@ -229,7 +229,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ServerResponse selectUserByPageNo(int pageNo, int pageSize) {
-
+        //必须放置在获取数据之前，即放置在userMapper.selectAll()之前
         PageHelper.startPage(pageNo, pageSize);
         List<User> userList = userMapper.selectAll();
         //分页模型
