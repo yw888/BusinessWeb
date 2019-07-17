@@ -3,10 +3,15 @@ package com.neuedu.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.neuedu.common.ServerResponse;
+import com.neuedu.dao.CategoryMapper;
 import com.neuedu.dao.ProductMapper;
+import com.neuedu.pojo.Category;
 import com.neuedu.pojo.Product;
 import com.neuedu.service.IProductService;
-import com.neuedu.vo.ProductListVo;
+import com.neuedu.utils.DateUtil;
+import com.neuedu.utils.PropertiesUtils;
+import com.neuedu.vo.ProductDetailVO;
+import com.neuedu.vo.ProductListVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +23,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     ProductMapper productMapper;
+
+    @Autowired
+    CategoryMapper categoryMapper;
 
 
     @Override
@@ -79,21 +87,58 @@ public class ProductServiceImpl implements IProductService {
 
         PageHelper.startPage(pageNo, pageSize);
         List<Product> productList = productMapper.selectAll();
-        List<ProductListVo> productListVos = new ArrayList<>();
+        List<ProductListVO> productListVOS = new ArrayList<>();
         for(Product product : productList){
-            ProductListVo productListVo = new ProductListVo();
-            productListVo.setId(product.getId());
-            productListVo.setCategoryId(product.getCategoryId());
-            productListVo.setName(product.getName());
-            productListVo.setMainImage(product.getMainImage());
-            productListVo.setSubtitle(product.getSubtitle());
-            productListVo.setStatus(product.getStatus());
-            productListVo.setPrice(product.getPrice());
-            productListVos.add(productListVo);
+            ProductListVO productListVO = new ProductListVO();
+            productListVO.setId(product.getId());
+            productListVO.setCategoryId(product.getCategoryId());
+            productListVO.setName(product.getName());
+            productListVO.setMainImage(product.getMainImage());
+            productListVO.setSubtitle(product.getSubtitle());
+            productListVO.setStatus(product.getStatus());
+            productListVO.setPrice(product.getPrice());
+            productListVOS.add(productListVO);
         }
         PageInfo pageInfo = new PageInfo(productList);
-        pageInfo.setList(productListVos);
+        pageInfo.setList(productListVOS);
 
         return ServerResponse.createBySussess("成功", pageInfo);
+    }
+
+    @Override
+    public ServerResponse findProductDetail(Integer productId) {
+        if(productId == null){
+            ServerResponse.createByError("商品id必须传递");
+        }
+
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if(product != null){
+            ProductDetailVO productDetailVO = new ProductDetailVO();
+            productDetailVO.setId(product.getId());
+            productDetailVO.setCategoryId(product.getCategoryId());
+            productDetailVO.setName(product.getName());
+            productDetailVO.setSubtitle(product.getSubtitle());
+            productDetailVO.setMainImage(product.getMainImage());
+            productDetailVO.setSubImages(product.getSubImage());
+            productDetailVO.setDetail(product.getDetail());
+            productDetailVO.setPrice(product.getPrice());
+            productDetailVO.setStock(product.getStock());
+            productDetailVO.setStatus(product.getStatus());
+
+            Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+            if(category == null){
+                productDetailVO.setParentCategoryId(0);
+            }else {
+                productDetailVO.setParentCategoryId(category.getParentId());
+            }
+
+            //imageHost
+            productDetailVO.setImageHost((String) PropertiesUtils.getProperty("imagehost"));
+            productDetailVO.setCreateTime(DateUtil.dateToString(product.getCreateTime()));
+            productDetailVO.setUpdateTime(DateUtil.dateToString(product.getUpdateTime()));
+
+            return ServerResponse.createBySussess("成功", productDetailVO);
+        }
+        return ServerResponse.createByError("商品不存在！");
     }
 }

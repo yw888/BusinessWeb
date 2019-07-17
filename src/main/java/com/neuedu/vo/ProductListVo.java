@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 /**
  * 显示在商品列表的实体类
  */
-public class ProductListVo implements Serializable{
+public class ProductListVO implements Serializable{
     private Integer id;
     private Integer categoryId;
     private String name;

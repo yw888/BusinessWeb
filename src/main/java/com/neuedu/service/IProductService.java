@@ -24,4 +24,11 @@ public interface IProductService {
      * @return
      */
     ServerResponse findProductByPage(Integer pageNo, Integer pageSize);
+
+    /**
+     * 获取产品详情
+     * @param productId
+     * @return
+     */
+    ServerResponse findProductDetail(Integer productId);
 }

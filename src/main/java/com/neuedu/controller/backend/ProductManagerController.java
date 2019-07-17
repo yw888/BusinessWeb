@@ -96,4 +96,28 @@ public class ProductManagerController {
             return ServerResponse.createByError("用户无权操作!");
         }
     }
+
+    /**
+     * 获取产品详情
+     * @param productId
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/detail.do")
+    public ServerResponse detail(Integer productId, HttpSession session){
+        //用户是否登录
+        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
+        if(cuser == null){
+            //需要登录
+            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        //是否有管理员权限
+        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
+        if(serverResponse.isSucces()){
+            //有管理员权限
+            return productService.findProductDetail(productId);
+        }else{
+            return ServerResponse.createByError("用户无权操作!");
+        }
+    }
 }
