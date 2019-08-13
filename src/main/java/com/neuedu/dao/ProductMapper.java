@@ -1,7 +1,11 @@
 package com.neuedu.dao;
 
+import com.neuedu.pojo.Category;
 import com.neuedu.pojo.Product;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
+import java.util.Set;
 
 public interface ProductMapper {
     /**
@@ -51,4 +55,21 @@ public interface ProductMapper {
      */
     int updateByPrimaryKeySelective(Product product);
 
+    /**
+     * 后台-搜索商品
+     * @param productId
+     * @param productName
+     * @return
+     */
+    List<Product> searchProduct(@Param("productId") Integer productId,
+                                @Param("productName") String productName);
+
+    /**
+     * 前台-搜索商品
+     * @param categorySet
+     * @param categoryId
+     * @return
+     */
+    List<Product> findProductByCategoryIdsAndKeywords(@Param("categorySet") Set<Category> categorySet,
+                                                      @Param("keyword") String keyword);
 }

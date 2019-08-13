@@ -124,4 +124,36 @@
     update_time, sub_image, detail
     from neuedu_product
   </select>
+  <select id="searchProduct" parameterType="map" resultType="com.neuedu.pojo.Product">
+    select id, category_id, name, subtitle, main_image, price, stock, status, create_time,
+    update_time, sub_image, detail
+    from neuedu_product
+    <where>
+      <if test="productId != null">
+        and id = #{productId}
+      </if>
+      <if test="productName != null">
+        and name like #{productName}
+      </if>
+    </where>
+  </select>
+
+  <select id="findProductByCategoryIdsAndKeywords" parameterType="map"
+          resultMap="BaseResultMap">
+    select id, category_id, name, subtitle, main_image, price, stock, status, create_time,
+    update_time, sub_image, detail
+    from neuedu_product
+    <where>
+      <if test="keyword != null">
+        and name like #{keyword}
+      </if>
+      <if test="categorySet != null and categorySet.size > 0">
+        and category_id in
+        <foreach collection="categorySet" item="category" open="(" close=")" separator=",">
+          #{category.id}
+        </foreach>
+      </if>
+    </where>
+  </select>
+
 </mapper>

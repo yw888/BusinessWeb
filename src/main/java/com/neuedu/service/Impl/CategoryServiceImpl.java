@@ -69,7 +69,8 @@ public class CategoryServiceImpl implements ICategoryService {
         return ServerResponse.createBySussess("成功", categories);
     }
 
-    private Set<Category> findChildCategory(Integer categoryId, Set<Category> categorySet){
+    @Override
+    public Set<Category> findChildCategory(Integer categoryId, Set<Category> categorySet){
         //step1:根据categoryId查询本节点
         Category category = categoryMapper.selectByPrimaryKey(categoryId);
         if(category != null){

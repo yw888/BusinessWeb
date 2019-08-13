@@ -1,7 +1,10 @@
 package com.neuedu.service;
 
 import com.neuedu.common.ServerResponse;
+import com.neuedu.pojo.Category;
 import com.neuedu.pojo.Product;
+
+import java.util.Set;
 
 public interface IProductService {
     /**
@@ -31,4 +34,28 @@ public interface IProductService {
      * @return
      */
     ServerResponse findProductDetail(Integer productId);
-}
+
+    /**
+     * 后台产品搜索
+     * @param productId
+     * @param productName
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    ServerResponse searchProductByIdOrName(Integer productId, String productName, Integer pageNo, Integer pageSize);
+
+    /**
+     * 前台商品搜索接口
+     * @param keyword
+     * @param categoryId
+     * @param pageNo
+     * @param pageSize
+     * @param orderBy
+     * @return
+     */
+    ServerResponse searchProduct(String keyword, Integer categoryId, Integer pageNo, Integer pageSize, String orderBy);
+
+
+
+    }

@@ -1,6 +1,9 @@
 package com.neuedu.service;
 
 import com.neuedu.common.ServerResponse;
+import com.neuedu.pojo.Category;
+
+import java.util.Set;
 
 public interface ICategoryService {
 
@@ -28,5 +31,13 @@ public interface ICategoryService {
      * @return
      */
     ServerResponse get_deep_category(Integer categoryId);
+
+    /**
+     * 递归查询后代节点
+     * @param categoryId
+     * @param categorySet
+     * @return
+     */
+    Set<Category> findChildCategory(Integer categoryId, Set<Category> categorySet);
 
 }

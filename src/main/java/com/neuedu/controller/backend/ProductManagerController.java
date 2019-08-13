@@ -120,4 +120,33 @@ public class ProductManagerController {
             return ServerResponse.createByError("用户无权操作!");
         }
     }
+
+    /**
+     * 产品搜索
+     * @param productId
+     * @param productName
+     * @param pageNo
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping(value = "/search.do")
+    public ServerResponse search(@RequestParam(required = false) Integer productId,
+                                 @RequestParam(required = false) String productName,
+                                 @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                 @RequestParam(required = false, defaultValue = "10")Integer pageSize, HttpSession session){
+        //用户是否登录
+        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
+        if(cuser == null){
+            //需要登录
+            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
+        }
+        //是否有管理员权限
+        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
+        if(serverResponse.isSucces()){
+            //有管理员权限
+            return this.productService.searchProductByIdOrName(productId, productName, pageNo, pageSize);
+        }else{
+            return ServerResponse.createByError("用户无权操作!");
+        }
+    }
 }
