@@ -31,4 +31,15 @@ public class ProductController {
         return this.productService.searchProduct(keyword, categoryId, pageNo, pageSize, orderBy);
     }
 
+    /**
+     * 前台-商品详情
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "/detail.do")
+    public ServerResponse productDetail(Integer productId){
+
+        return this.productService.getProductDetail(productId);
+    }
+
 }

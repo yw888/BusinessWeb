@@ -2,6 +2,7 @@ package com.neuedu.service.Impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.neuedu.common.Const;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.dao.CategoryMapper;
 import com.neuedu.dao.ProductMapper;
@@ -128,6 +129,14 @@ public class ProductServiceImpl implements IProductService {
         }
 
         Product product = productMapper.selectByPrimaryKey(productId);
+        ProductDetailVO productDetailVO = assembleProductDetailVO(product);
+        if( productDetailVO != null){
+            return ServerResponse.createBySussess("成功", productDetailVO);
+        }
+        return ServerResponse.createByError("商品不存在！");
+    }
+
+    private ProductDetailVO assembleProductDetailVO(Product product){
         if(product != null){
             ProductDetailVO productDetailVO = new ProductDetailVO();
             productDetailVO.setId(product.getId());
@@ -153,9 +162,9 @@ public class ProductServiceImpl implements IProductService {
             productDetailVO.setCreateTime(DateUtil.dateToString(product.getCreateTime()));
             productDetailVO.setUpdateTime(DateUtil.dateToString(product.getUpdateTime()));
 
-            return ServerResponse.createBySussess("成功", productDetailVO);
+            return productDetailVO;
         }
-        return ServerResponse.createByError("商品不存在！");
+        return null;
     }
 
     @Override
@@ -218,5 +227,26 @@ public class ProductServiceImpl implements IProductService {
         }
         pageInfo.setList(productListVOList);
         return ServerResponse.createBySussess("成功", pageInfo);
+    }
+
+    @Override
+    public ServerResponse getProductDetail(Integer productId) {
+
+        if(productId == null){
+            return ServerResponse.createByError("商品Id必须传递");
+        }
+
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if(product == null){
+            return ServerResponse.createByError("商品已下架或删除");
+        }
+
+        if(product.getStatus() != Const.productStatusEnum.PRODUCT_ONLINE.getStatus()){
+            return ServerResponse.createByError("商品已下架或删除");
+        }
+
+        ProductDetailVO productDetailVO = this.assembleProductDetailVO(product);
+
+        return ServerResponse.createBySussess(productDetailVO);
     }
 }

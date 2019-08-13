@@ -11,4 +11,26 @@ public class Const {
 
     }
 
+    public enum productStatusEnum{
+        PRODUCT_ONLINE(1, "在售"),
+        PRODCUT_OFFLINE(2, "下架"),
+        PRODUCT_DELETE(3, "删除")
+        ;
+        private int status;
+        private String desc;
+
+        private productStatusEnum(int status, String desc) {
+            this.status = status;
+            this.desc = desc;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
 }

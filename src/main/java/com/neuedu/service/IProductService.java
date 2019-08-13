@@ -56,6 +56,11 @@ public interface IProductService {
      */
     ServerResponse searchProduct(String keyword, Integer categoryId, Integer pageNo, Integer pageSize, String orderBy);
 
-
+    /**
+     * 前台-获取商品详情
+     * @param productId
+     * @return
+     */
+    ServerResponse getProductDetail(Integer productId);
 
     }
