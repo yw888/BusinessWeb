@@ -99,7 +99,7 @@
       </if>
 
       <if test="detail != null">
-        detail = #{detail,jdbcType=LONGVARCHAR}
+        detail = #{detail,jdbcType=LONGVARCHAR},
       </if>
       update_time = now(),
     </set>

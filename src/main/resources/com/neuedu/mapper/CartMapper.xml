@@ -130,4 +130,10 @@
     <select id="selectCartProductCount" parameterType="int" resultType="int">
         select IFNULL(sum(quantity), 0) count from neuedu_cart where user_id = #{userId}
     </select>
+
+    <select id="selectCheckedCartByUserId" parameterType="int" resultType="com.neuedu.pojo.Cart">
+        select id, user_id userId, product_id productId, quantity, checked, create_time createTime, update_time updateTime
+        from neuedu_cart
+        where user_id = #{userId} and checked = 1
+    </select>
 </mapper>
