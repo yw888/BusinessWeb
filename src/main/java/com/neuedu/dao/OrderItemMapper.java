@@ -1,6 +1,8 @@
 package com.neuedu.dao;
 
 import com.neuedu.pojo.OrderItem;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface OrderItemMapper {
@@ -50,4 +52,12 @@ public interface OrderItemMapper {
      * @return
      */
     int batchInsertOrderItem(List<OrderItem> orderItemList);
+
+    /**
+     * 根据userId和orderNo查询订单明细
+     * @param userId
+     * @param orderNo
+     * @return
+     */
+    List<OrderItem> selectAllByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
 }

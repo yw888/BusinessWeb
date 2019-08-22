@@ -83,4 +83,16 @@
     payment_time, send_time, end_time, close_time, create_time, update_time
     from neuedu_order
   </select>
+
+  <select id="selectAllByUserId" parameterType="int" resultMap="BaseResultMap">
+     select id, order_no, user_id, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from neuedu_order where user_id = #{userId}
+  </select>
+
+  <select id="getOrderByUserIdAndOrderNo" parameterType="map" resultMap="BaseResultMap">
+      select id, order_no, user_id, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from neuedu_order where user_id = #{userId} and order_no = #{orderNo}
+  </select>
 </mapper>

@@ -1,9 +1,12 @@
 package com.neuedu.service.Impl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.neuedu.dao.*;
 import com.neuedu.pojo.*;
 import com.neuedu.utils.DateUtil;
 import com.neuedu.utils.PropertiesUtils;
 import com.neuedu.vo.OrderItemVo;
+import com.neuedu.vo.OrderProductVo;
 import com.neuedu.vo.ShippingVo;
 import java.math.BigDecimal;
 
@@ -13,6 +16,7 @@ import com.neuedu.common.ServerResponse;
 import com.neuedu.service.IOrderService;
 import com.neuedu.utils.BigDecimalUtil;
 import com.neuedu.vo.OrderVo;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -255,5 +259,63 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         return ServerResponse.createBySussess(orderItemList);
+    }
+
+    @Override
+    public ServerResponse getOrderCartProduct(Integer userId) {
+        OrderProductVo orderProductVo = new OrderProductVo();
+
+        //从购物车获取购物信息
+        List<Cart> cartList = this.cartMapper.selectCheckedCartByUserId(userId);
+        ServerResponse serverResponse = this.getCartOrderItem(userId, cartList);
+        if(!serverResponse.isSucces()){
+            return serverResponse;
+        }
+        List<OrderItem> orderItemList = (List<OrderItem>)serverResponse.getData();
+        List<OrderItemVo> orderItemVoList = Lists.newArrayList();
+        BigDecimal totalPrice = new BigDecimal("0");
+        for(OrderItem orderItem : orderItemList){
+            totalPrice = BigDecimalUtil.add(totalPrice.doubleValue(), orderItem.getTotalPrice().doubleValue());
+            orderItemVoList.add(assembleOrderItemVo(orderItem));
+        }
+
+        orderProductVo.setProductTotalPrice(totalPrice);
+        orderProductVo.setImageHost((String)PropertiesUtils.getProperty("imagehost"));
+        orderProductVo.setOrderItemVoList(orderItemVoList);
+
+        return ServerResponse.createBySussess(orderProductVo);
+    }
+
+    @Override
+    public ServerResponse list(Integer userId, Integer pageNo, Integer pageSize) {
+        PageHelper.startPage(pageNo, pageSize);
+        List<Order> orderList = this.orderMapper.selectAllByUserId(userId);
+
+        List<OrderVo> orderVoList = Lists.newArrayList();
+        for(Order order : orderList){
+            if(order == null){
+                return ServerResponse.createByError("订单不存在");
+            }
+            List<OrderItem> orderItemList = this.orderItemMapper.selectAllByUserIdAndOrderNo(userId, order.getOrderNo());
+            orderVoList.add(this.assembleOrderVo(order, orderItemList));
+        }
+        PageInfo pageInfo = new PageInfo(orderVoList);
+        return ServerResponse.createBySussess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse detail(Integer userId, Long orderNo) {
+        if(orderNo == null){
+            return ServerResponse.createByError("订单号必须传递");
+        }
+        Order order = this.orderMapper.getOrderByUserIdAndOrderNo(userId, orderNo);
+
+        if(order == null){
+            return ServerResponse.createByError("未找到该订单");
+        }
+
+        List<OrderItem> orderItemList = this.orderItemMapper.selectAllByUserIdAndOrderNo(userId, orderNo);
+        OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+        return ServerResponse.createBySussess(orderVo);
     }
 }
