@@ -34,20 +34,7 @@ public class CategoryManagerController {
     @RequestMapping(value = "/add_category.do")
     public ServerResponse add_category(@RequestParam(required = false, defaultValue = "0") int parentId,
                                        String categoryName, HttpSession session){
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return categoryService.addCategory(parentId, categoryName);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return categoryService.addCategory(parentId, categoryName);
     }
 
     /**
@@ -55,21 +42,7 @@ public class CategoryManagerController {
      */
     @RequestMapping(value = "/get_category.do")
     public ServerResponse get_category(int categoryId, HttpSession session){
-
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return categoryService.getCategory(categoryId);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return categoryService.getCategory(categoryId);
     }
 
     /**
@@ -77,21 +50,7 @@ public class CategoryManagerController {
      */
     @RequestMapping(value = "/set_category_name.do")
     public ServerResponse set_category_name(Integer categoryId, String categoryName, HttpSession session){
-
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return categoryService.set_category_name(categoryId, categoryName);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return categoryService.set_category_name(categoryId, categoryName);
     }
 
     /**
@@ -102,18 +61,7 @@ public class CategoryManagerController {
      */
     @RequestMapping(value = "/get_deep_category.do")
     public ServerResponse get_deep_category(Integer categoryId, HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null){
-            //未登录或登录过期
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //判断是否是管理员
-        ServerResponse serverResponse = userService.checkUserAdmin(user);
-        if(serverResponse.isSucces()){
-            //管理员
-            return categoryService.get_deep_category(categoryId);
-        }
-        return ServerResponse.createByError("不是管理员,没有权限操作!");
+        return categoryService.get_deep_category(categoryId);
     }
 
 }

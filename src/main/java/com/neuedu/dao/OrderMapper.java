@@ -62,4 +62,18 @@ public interface OrderMapper {
      */
     Order getOrderByUserIdAndOrderNo(@Param("userId") Integer userId, @Param("orderNo") Long orderNo);
 
+    /**
+     * 更新
+     * @param order
+     * @return
+     */
+    int updateOrderBySelectActive(Order order);
+
+    /**
+     * 根据订单号查询
+     * @param orderNo
+     * @return
+     */
+    Order selectOrderByOrderNo(Long orderNo);
+
 }

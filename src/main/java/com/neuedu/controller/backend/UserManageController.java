@@ -42,18 +42,7 @@ public class UserManageController {
     public ServerResponse findUserByPageNo(@RequestParam(required = false, defaultValue = "1") int pageNo,
                                            @RequestParam(required = false, defaultValue = "10") int pageSize,
                                            HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
-        if(user == null){
-            //未登录或登录过期
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //判断是否是管理员
-        ServerResponse serverResponse = userService.checkUserAdmin(user);
-        if(serverResponse.isSucces()){
-            //管理员
-            return userService.selectUserByPageNo(pageNo, pageSize);
-        }
-        return ServerResponse.createByError("不是管理员,没有权限操作!");
+        return userService.selectUserByPageNo(pageNo, pageSize);
     }
 
 

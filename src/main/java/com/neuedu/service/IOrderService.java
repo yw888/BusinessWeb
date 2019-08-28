@@ -34,5 +34,27 @@ public interface IOrderService {
      * @return
      */
     ServerResponse detail(Integer userId, Long orderNo);
+
+    /**
+     * 前台取消订单
+     * @param userId
+     * @param orderNo
+     * @return
+     */
+    ServerResponse cancel(Integer userId, Long orderNo);
+
+    /**
+     * 后台-按订单号查询
+     * @param orderNo
+     * @return
+     */
+    ServerResponse search(Long orderNo);
+
+    /**
+     * 后台-订单发货
+     * @param orderNo
+     * @return
+     */
+    ServerResponse send(Long orderNo);
 }
 

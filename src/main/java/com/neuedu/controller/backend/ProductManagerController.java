@@ -30,20 +30,7 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "/save.do")
     public ServerResponse saveOrUpdate(Product product, HttpSession session){
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return productService.saveOrUpdate(product);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return productService.saveOrUpdate(product);
     }
 
     /**
@@ -55,20 +42,7 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "/set_sale_status.do")
     public ServerResponse setSaleStatus(Integer productId, Integer status, HttpSession session){
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return productService.setSaleStatus(productId, status);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return productService.setSaleStatus(productId, status);
     }
 
     /**
@@ -81,20 +55,7 @@ public class ProductManagerController {
     @RequestMapping(value = "/list.do")
     public ServerResponse list(@RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                @RequestParam(required = false, defaultValue = "10") Integer pageSize, HttpSession session){
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return productService.findProductByPage(pageNo, pageSize);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return productService.findProductByPage(pageNo, pageSize);
     }
 
     /**
@@ -105,20 +66,7 @@ public class ProductManagerController {
      */
     @RequestMapping(value = "/detail.do")
     public ServerResponse detail(Integer productId, HttpSession session){
-        //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return productService.findProductDetail(productId);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return productService.findProductDetail(productId);
     }
 
     /**
@@ -135,18 +83,6 @@ public class ProductManagerController {
                                  @RequestParam(required = false, defaultValue = "1") Integer pageNo,
                                  @RequestParam(required = false, defaultValue = "10")Integer pageSize, HttpSession session){
         //用户是否登录
-        User cuser = (User)session.getAttribute(Const.CURRENT_USER);
-        if(cuser == null){
-            //需要登录
-            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
-        }
-        //是否有管理员权限
-        ServerResponse serverResponse = userService.checkUserAdmin(cuser);
-        if(serverResponse.isSucces()){
-            //有管理员权限
-            return this.productService.searchProductByIdOrName(productId, productName, pageNo, pageSize);
-        }else{
-            return ServerResponse.createByError("用户无权操作!");
-        }
+        return this.productService.searchProductByIdOrName(productId, productName, pageNo, pageSize);
     }
 }

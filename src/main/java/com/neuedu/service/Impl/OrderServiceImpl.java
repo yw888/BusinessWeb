@@ -1,6 +1,7 @@
 package com.neuedu.service.Impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysql.fabric.Server;
 import com.neuedu.dao.*;
 import com.neuedu.pojo.*;
 import com.neuedu.utils.DateUtil;
@@ -20,6 +21,7 @@ import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -288,8 +290,15 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public ServerResponse list(Integer userId, Integer pageNo, Integer pageSize) {
+
         PageHelper.startPage(pageNo, pageSize);
-        List<Order> orderList = this.orderMapper.selectAllByUserId(userId);
+        List<Order> orderList = Lists.newArrayList();
+        if(userId == null){
+            //是管理员
+            orderList = this.orderMapper.selectAll();
+        }else{
+           orderList = this.orderMapper.selectAllByUserId(userId);
+        }
 
         List<OrderVo> orderVoList = Lists.newArrayList();
         for(Order order : orderList){
@@ -317,5 +326,63 @@ public class OrderServiceImpl implements IOrderService {
         List<OrderItem> orderItemList = this.orderItemMapper.selectAllByUserIdAndOrderNo(userId, orderNo);
         OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
         return ServerResponse.createBySussess(orderVo);
+    }
+
+    @Override
+    public ServerResponse cancel(Integer userId, Long orderNo) {
+        if(orderNo == null){
+            return ServerResponse.createByError("订单号必须传递");
+        }
+        Order order = this.orderMapper.getOrderByUserIdAndOrderNo(userId, orderNo);
+        if(order == null){
+            return ServerResponse.createByError("未找到该订单");
+        }
+
+        if(order.getStatus() != Const.OrderStatusEnum.ORDER_UN_PAY.getStatus()){
+            return ServerResponse.createByError("已经付款的订单不能取消");
+        }
+
+        Order order1 = new Order();
+        order1.setId(order.getId());
+        order1.setStatus(Const.OrderStatusEnum.ORDER_CANCELLED.getStatus());
+        int result = this.orderMapper.updateOrderBySelectActive(order1);
+        if(result > 0){
+            return ServerResponse.createBySussess("成功取消订单");
+        }
+        return ServerResponse.createByError("订单取消失败");
+    }
+
+    @Override
+    public ServerResponse search(Long orderNo) {
+        if(orderNo == null){
+            return ServerResponse.createByError("订单号必须传递");
+        }
+        Order order = this.orderMapper.selectOrderByOrderNo(orderNo);
+        if(order == null){
+            return ServerResponse.createByError("未找到该订单");
+        }
+        List<OrderItem> orderItemList = this.orderItemMapper.selectAllByUserIdAndOrderNo(order.getUserId(), orderNo);
+        OrderVo orderVo = this.assembleOrderVo(order, orderItemList);
+        return ServerResponse.createBySussess(orderVo);
+    }
+
+    @Override
+    public ServerResponse send(Long orderNo) {
+        if(orderNo == null){
+            return ServerResponse.createByError("订单号必须传递");
+        }
+        Order order = this.orderMapper.selectOrderByOrderNo(orderNo);
+        if(order == null){
+            return ServerResponse.createByError("未找到该订单");
+        }
+        if(order.getStatus() == Const.OrderStatusEnum.ORDER_PAYD.getStatus()){
+            order.setStatus(Const.OrderStatusEnum.ORDER_SEND.getStatus());
+            order.setSendTime(new Date());
+            int result = this.orderMapper.updateOrderBySelectActive(order);
+            if(result > 0){
+                return ServerResponse.createBySussess("发货成功");
+            }
+        }
+        return ServerResponse.createByError("发货失败");
     }
 }

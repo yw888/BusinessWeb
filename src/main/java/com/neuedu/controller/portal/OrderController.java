@@ -72,6 +72,12 @@ public class OrderController {
         return this.orderService.list(user.getId(), pageNo, pageSize);
     }
 
+    /**
+     * 订单详情
+     * @param session
+     * @param orderNo
+     * @return
+     */
     @RequestMapping("/detail.do")
     public ServerResponse detail(HttpSession session, Long orderNo){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
@@ -81,6 +87,23 @@ public class OrderController {
         }
 
         return this.orderService.detail(user.getId(), orderNo);
+    }
+
+    /**
+     * 取消订单
+     * @param session
+     * @param orderNo
+     * @return
+     */
+    @RequestMapping("/cancel.do")
+    public ServerResponse cancel(HttpSession session, Long orderNo){
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if(user == null){
+            //未登录或登录过期
+            return ServerResponse.createByError(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+
+        return this.orderService.cancel(user.getId(), orderNo);
     }
 
 
