@@ -141,4 +141,10 @@
     payment_time, send_time, end_time, close_time, create_time, update_time
     from neuedu_order where order_no = #{orderNo}
   </select>
+
+  <select id="findOrderByCreateTime" parameterType="string" resultMap="BaseResultMap">
+    select id, order_no, user_id, shipping_id, payment, payment_type, postage, status,
+    payment_time, send_time, end_time, close_time, create_time, update_time
+    from neuedu_order where status = 10 and create_time <![CDATA[<= #{closeOrderTime} ]]>
+  </select>
 </mapper>

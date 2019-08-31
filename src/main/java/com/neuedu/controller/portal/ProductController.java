@@ -3,6 +3,7 @@ package com.neuedu.controller.portal;
 import com.neuedu.common.ServerResponse;
 import com.neuedu.service.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,9 +37,9 @@ public class ProductController {
      * @param productId
      * @return
      */
-    @RequestMapping(value = "/detail.do")
-    public ServerResponse productDetail(Integer productId){
-
+    @RequestMapping(value = "/detail/{productId}")
+    public ServerResponse productDetail(@PathVariable("productId") Integer productId){
+//        int s = 3/0;
         return this.productService.getProductDetail(productId);
     }
 

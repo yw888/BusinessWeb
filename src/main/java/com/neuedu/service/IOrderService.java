@@ -56,5 +56,13 @@ public interface IOrderService {
      * @return
      */
     ServerResponse send(Long orderNo);
+
+    /**
+     * 定时关闭订单
+     * 关闭在closeOrderTime之前的订单
+     * @param closeOrderTime
+     */
+    void closeOrder(String closeOrderTime);
+
 }
 

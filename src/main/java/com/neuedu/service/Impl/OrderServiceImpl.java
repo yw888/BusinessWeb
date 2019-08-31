@@ -20,6 +20,7 @@ import com.neuedu.vo.OrderVo;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,7 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ShippingMapper shippingMapper;
 
+    @Transactional
     @Override
     public ServerResponse createOrder(Integer userId, Integer shippingId) {
         //step1:参数校验
@@ -384,5 +386,29 @@ public class OrderServiceImpl implements IOrderService {
             }
         }
         return ServerResponse.createByError("发货失败");
+    }
+
+    @Override
+    public void closeOrder(String closeOrderTime) {
+        List<Order> orders = this.orderMapper.findOrderByCreateTime(closeOrderTime);
+        if(orders != null && orders.size() > 0){
+            for(Order order : orders){
+                List<OrderItem> orderItemList = this.orderItemMapper.selectAllByUserIdAndOrderNo(order.getUserId(), order.getOrderNo());
+                if(orderItemList != null && orderItemList.size() > 0){
+                    for(OrderItem orderItem : orderItemList){
+                        Product product = productMapper.selectByPrimaryKey(orderItem.getProductId());
+                        if(product != null){
+                            product.setStock(product.getStock() + orderItem.getQuantity());
+                            this.productMapper.updateByPrimaryKeySelective(product);
+                        }
+                    }
+                }
+                order.setStatus(Const.OrderStatusEnum.ORDER_CANCELLED.getStatus());
+                order.setCloseTime(new Date());
+                this.orderMapper.updateByPrimaryKey(order);
+            }
+
+        }
+
     }
 }

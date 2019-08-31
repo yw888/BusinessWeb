@@ -76,4 +76,11 @@ public interface OrderMapper {
      */
     Order selectOrderByOrderNo(Long orderNo);
 
+    /**
+     * 查询需要关闭的订单
+     * @param closeOrderTime
+     * @return
+     */
+    List<Order> findOrderByCreateTime(String closeOrderTime);
+
 }
